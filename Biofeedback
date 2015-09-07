@@ -1,0 +1,134 @@
+/***********************
+ Arduino Biofeedback
+ Genuary 2014
+ Giovanni Gentile
+ http://www.0lab.it
+ Creative Common License
+************************/
+
+//led
+int ledPin = 13;
+
+//LCD
+#include <LiquidCrystal.h>
+LiquidCrystal lcd(12,11,5,4,3,2);
+
+//Tempo
+int sec = 0;
+int minuti = 0;
+
+//Termometro
+int valTemp = 0;
+const int sensorTemp = A1;
+float voltage = 0;
+float temp = 0;
+int val_Adc = 0;
+
+//GRS
+int grsSensor = A0;
+int gsrVal = 0;
+int Gm = 0;
+
+void setup()
+{
+  //init seriale
+  Serial.begin(9600);
+  //init lcd
+  lcd.begin(16,2);
+  //init led
+  pinMode(ledPin, OUTPUT);
+  digitalWrite(ledPin, LOW);
+}
+ 
+void loop()
+{
+  
+  digitalWrite(ledPin,HIGH);
+  
+  //ritardo di un secondo
+  delay(1000);
+  
+  //Calcolo GSR
+  gsrVal = analogRead (grsSensor);
+  
+  if (Gm < gsrVal) {
+    Gm = gsrVal;
+  }
+  
+  /*eseguo un ciclo
+  for(byte Ciclo = 0; Ciclo < 100; Ciclo++)
+  {
+    //acquisisco il valore e lo sommo alla
+    //variabile
+    val_Adc += analogRead(sensorTemp);
+    //questo ritardo serve per dare il tempo
+    //all' ADC di eseguire correttamente
+    //la prossima acquisizione
+    delay(10);
+  }
+ 
+  //eseguo la media dei 100 valori letti
+  val_Adc /= 100;
+ */
+  
+  //calcolo la temperatura in °C
+  //temp = ((val_Adc * 0.0032) - 0.5) / 0.01;
+  valTemp = analogRead(sensorTemp);
+  voltage = (valTemp / 1024.0) * 5.0;
+  temp = (voltage - .5) * 100;
+   
+  digitalWrite(ledPin,LOW);
+  
+  
+  //invio i dati al computer
+  Serial.println("-------------");
+  Serial.print("Time ");
+  Serial.print(sec);
+  Serial.print(":");
+  Serial.println(minuti);
+  Serial.print("Temp:");
+  Serial.println(temp);
+  Serial.print("GSR:");
+  Serial.println(gsrVal);
+  Serial.print("GSR MAX:");
+  Serial.println(Gm);
+  Serial.print("Pulse:");
+  Serial.println("123");  
+  
+  //Scrivo su lcd
+  lcd.clear();
+  lcd.setCursor (0,0);
+  lcd.print(sec);
+  lcd.setCursor(2,0);
+  lcd.write(":");
+  lcd.setCursor(3,0);
+  lcd.print(minuti);
+  lcd.setCursor(5,0);
+  lcd.write("T:");
+  lcd.print(temp);  
+  lcd.setCursor(11,0);
+  lcd.write("P:");
+  lcd.setCursor(13,0);
+  lcd.print("123");
+  
+  
+  //Seconda riga
+  lcd.setCursor(0,1);
+  lcd.write("GSR:");
+  lcd.setCursor (4,1);
+  lcd.print(gsrVal);
+  lcd.setCursor (8,1);
+  lcd.write("GM:");
+  lcd.setCursor (11,1);
+  lcd.print(Gm);
+  
+  //Aggiungo 1 ai secondi
+  sec = sec+1;
+  
+  if (sec==60){
+    minuti=minuti + 1;
+    sec=0;
+  }
+}
+
+
