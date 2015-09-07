@@ -13,11 +13,11 @@ int ledPin = 13;
 #include <LiquidCrystal.h>
 LiquidCrystal lcd(12,11,5,4,3,2);
 
-//Tempo
+//Time
 int sec = 0;
 int minuti = 0;
 
-//Termometro
+//Temperature
 int valTemp = 0;
 const int sensorTemp = A1;
 float voltage = 0;
@@ -38,6 +38,11 @@ void setup()
   //init led
   pinMode(ledPin, OUTPUT);
   digitalWrite(ledPin, LOW);
+  lcd.clear();
+  lcd.setCursor (0,0);
+  lcd.print("Arduino");
+  lcd.setCursor (0,1);
+  lcd.print("Biofeedback");
 }
  
 void loop()
@@ -45,33 +50,26 @@ void loop()
   
   digitalWrite(ledPin,HIGH);
   
-  //ritardo di un secondo
+  //1 sec delay
   delay(1000);
   
-  //Calcolo GSR
+  //Value GSR
   gsrVal = analogRead (grsSensor);
   
   if (Gm < gsrVal) {
     Gm = gsrVal;
   }
   
-  /*eseguo un ciclo
+  /*
   for(byte Ciclo = 0; Ciclo < 100; Ciclo++)
   {
-    //acquisisco il valore e lo sommo alla
-    //variabile
     val_Adc += analogRead(sensorTemp);
-    //questo ritardo serve per dare il tempo
-    //all' ADC di eseguire correttamente
-    //la prossima acquisizione
     delay(10);
   }
- 
-  //eseguo la media dei 100 valori letti
   val_Adc /= 100;
  */
   
-  //calcolo la temperatura in °C
+  //Temp in C°
   //temp = ((val_Adc * 0.0032) - 0.5) / 0.01;
   valTemp = analogRead(sensorTemp);
   voltage = (valTemp / 1024.0) * 5.0;
@@ -80,7 +78,7 @@ void loop()
   digitalWrite(ledPin,LOW);
   
   
-  //invio i dati al computer
+  //upload to serial
   Serial.println("-------------");
   Serial.print("Time ");
   Serial.print(sec);
@@ -92,10 +90,8 @@ void loop()
   Serial.println(gsrVal);
   Serial.print("GSR MAX:");
   Serial.println(Gm);
-  Serial.print("Pulse:");
-  Serial.println("123");  
   
-  //Scrivo su lcd
+  //lcd print
   lcd.clear();
   lcd.setCursor (0,0);
   lcd.print(sec);
@@ -112,7 +108,7 @@ void loop()
   lcd.print("123");
   
   
-  //Seconda riga
+  //Second row
   lcd.setCursor(0,1);
   lcd.write("GSR:");
   lcd.setCursor (4,1);
@@ -122,9 +118,10 @@ void loop()
   lcd.setCursor (11,1);
   lcd.print(Gm);
   
-  //Aggiungo 1 ai secondi
+  //add 1 sec
   sec = sec+1;
   
+  //add 1 minute
   if (sec==60){
     minuti=minuti + 1;
     sec=0;
