@@ -12,5 +12,3 @@ Let's start with the list of materials needed:
 ​A temperature sensor TMP 36
 ​Two plates of copper or conductive metal
 ​Some connection cables
-​An LED infrared emitter
-​A sensor infrared receiver
