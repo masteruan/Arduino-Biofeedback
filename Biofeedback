@@ -55,22 +55,11 @@ void loop()
   
   //Value GSR
   gsrVal = analogRead (grsSensor);
-  
   if (Gm < gsrVal) {
     Gm = gsrVal;
   }
   
-  /*
-  for(byte Ciclo = 0; Ciclo < 100; Ciclo++)
-  {
-    val_Adc += analogRead(sensorTemp);
-    delay(10);
-  }
-  val_Adc /= 100;
- */
-  
   //Temp in C°
-  //temp = ((val_Adc * 0.0032) - 0.5) / 0.01;
   valTemp = analogRead(sensorTemp);
   voltage = (valTemp / 1024.0) * 5.0;
   temp = (voltage - .5) * 100;
@@ -103,10 +92,6 @@ void loop()
   lcd.write("T:");
   lcd.print(temp);  
   lcd.setCursor(11,0);
-  lcd.write("P:");
-  lcd.setCursor(13,0);
-  lcd.print("123");
-  
   
   //Second row
   lcd.setCursor(0,1);
@@ -127,5 +112,3 @@ void loop()
     sec=0;
   }
 }
-
-
