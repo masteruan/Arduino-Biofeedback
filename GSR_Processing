@@ -1,0 +1,16 @@
+void setup(){
+  Serial.begin(9600); 
+}
+
+void loop(){
+  int a=analogRead(A1);
+  if (Serial.available() > 0) {
+
+    byte inbyte=Serial.read();
+    if(inbyte=='a'){
+      Serial.write(a);
+
+
+    }
+  }
+}
